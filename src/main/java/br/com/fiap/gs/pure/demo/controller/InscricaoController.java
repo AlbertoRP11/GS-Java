@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("inscricao")
 @Slf4j
 @CacheConfig(cacheNames = "inscricao")
-@Tag(name = "inscricao", description = "Endpoint relacionados com inscricoões de eventos")
+@Tag(name = "Inscrição", description = "Endpoint relacionados com as inscrições")
 public class InscricaoController {
 
     @Autowired
@@ -44,7 +44,8 @@ public class InscricaoController {
 
     @GetMapping
     @Cacheable
-    @Operation(summary = "Lista todas as inscrições cadastradas no sistema.", description = "Endpoint que retorna um array de objetos do tipo inscrições com todas as inscrições do usuário atual")
+    @Operation(summary = "Lista todas as inscrições cadastradas no sistema.",
+            description = "Endpoint que retorna um array de objetos do tipo inscrições com todas as inscrições do usuário atual")
     public List<Inscricao> index() {
         return inscricaoRepository.findAll();
     }
@@ -52,6 +53,7 @@ public class InscricaoController {
     @PostMapping
     @ResponseStatus(CREATED)
     @CacheEvict(allEntries = true)
+    @Operation(summary = "Cadastra uma inscrição no sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Erro de validação da inscrição"),
             @ApiResponse(responseCode = "201", description = "inscrição efetuada com sucesso")
@@ -62,6 +64,8 @@ public class InscricaoController {
     }
 
     @GetMapping("{id}")
+    @Operation(summary = "Busca uma inscrição pelo id.",
+            description = "Endpoint que retorna um inscrição com base em seu id.")
     public ResponseEntity<Inscricao> get(@PathVariable Long id) {
         log.info("Buscar por id: {}", id);
 
@@ -75,6 +79,7 @@ public class InscricaoController {
     @DeleteMapping("{id}")
     @ResponseStatus(NO_CONTENT)
     @CacheEvict(allEntries = true)
+    @Operation(summary = "Apaga uma inscrição do sistema.")
     public void destroy(@PathVariable Long id) {
         log.info("apagando inscrição {}", id);
 
@@ -84,6 +89,7 @@ public class InscricaoController {
 
     @PutMapping("{id}")
     @CacheEvict(allEntries = true)
+    @Operation(summary = "Atualiza os dados de uma inscrição no sistema com base no id.")
     public Inscricao update(@PathVariable Long id, @RequestBody Inscricao inscricao) {
         log.info("atualizando inscrição id {} para {}", id, inscricao);
 

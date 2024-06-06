@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("user")
 @Slf4j
-@Tag(name = "usuarios", description = "Endpoint relacionado com os usuários do CineWave")
+@Tag(name = "Usuários", description = "Endpoint relacionado com os usuários")
 public class UsuarioController {
 
     @Autowired
