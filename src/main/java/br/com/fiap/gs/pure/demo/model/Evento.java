@@ -7,6 +7,7 @@ import br.com.fiap.gs.pure.demo.controller.EventoController;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,20 +29,22 @@ public class Evento {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotBlank
+    @NotBlank(message = "{evento.nome.notblank}")
     private String nomeEvento;
     @JsonFormat (pattern = "dd/MM/yyyy")
     private LocalDate dataEvento;
-    @NotBlank
+    @NotBlank(message = "{evento.descricao.notblank}")
     private String descricao;
     //duração do evento em forma de número
     private LocalDateTime horarioInicio;
     private LocalDateTime horarioTermino;
-    @NotBlank
+    @NotBlank(message = "{evento.praia.notblank}")
+    @Size(min = 3, message = "{evento.praia.size}")
     private String praia;
-    @NotBlank
+    @NotBlank(message = "{evento.cidade.notblank}")
+    @Size(min = 3, message = "{evento.cidade.size}")
     private String cidade;
-    @Positive
+    @Positive(message = "{evento.pontos.positive}")
     private int pontos;
     @OneToOne
     private Usuario organizador;

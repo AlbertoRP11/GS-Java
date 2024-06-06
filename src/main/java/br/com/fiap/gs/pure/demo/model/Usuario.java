@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,12 +25,14 @@ public class Usuario {
     private String nome;
 
     @NotBlank(message = "{usuario.email.notblank}")
-    @Email
+    @Email(message = "{usuario.email.formato}")
     private String email;
 
-    @NotBlank @Size(min = 6, max = 6, message = "{usuario.senha.size}")
+    @NotBlank(message = "{usuario.senha.not.blank}")
+    @Size(min = 6, max = 6, message = "{usuario.senha.size}")
     private String senha;
-    @Positive
+
+    @PositiveOrZero(message = "{usuario.pontos.positiveorzero}")
     private int pontos;
 
 //    public EntityModel<Usuario> toEntityModel() {

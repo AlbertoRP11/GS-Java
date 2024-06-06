@@ -1,6 +1,6 @@
 package br.com.fiap.gs.pure.demo.model;
 
-import br.com.fiap.gs.pure.demo.enums.StatusInscricao;
+import br.com.fiap.gs.pure.demo.validation.StatusInscricao;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -22,8 +22,9 @@ public class Inscricao {
     private Long id;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataInscricao;
-    @NotBlank
-    private StatusInscricao statusInscricao;
+    @NotBlank(message = "{inscricao.status.notblank}")
+    @StatusInscricao(message = "{inscricao.status.opcoes}")
+    private String statusInscricao;
     @ManyToOne
     private Usuario usuario;
     @ManyToOne
