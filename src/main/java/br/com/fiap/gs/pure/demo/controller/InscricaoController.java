@@ -22,8 +22,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.fiap.gs.pure.demo.model.Evento;
 import br.com.fiap.gs.pure.demo.model.Inscricao;
+import br.com.fiap.gs.pure.demo.model.Usuario;
+import br.com.fiap.gs.pure.demo.repository.EventoRepository;
 import br.com.fiap.gs.pure.demo.repository.InscricaoRepository;
+import br.com.fiap.gs.pure.demo.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -42,6 +46,11 @@ public class InscricaoController {
     @Autowired
     InscricaoRepository inscricaoRepository;
 
+    @Autowired
+    UsuarioRepository usuarioRepository;
+    @Autowired
+    EventoRepository eventoRepository;
+
     @GetMapping
     @Cacheable
     @Operation(summary = "Lista todas as inscrições cadastradas no sistema.",
@@ -50,18 +59,37 @@ public class InscricaoController {
         return inscricaoRepository.findAll();
     }
 
-    @PostMapping
-    @ResponseStatus(CREATED)
-    @CacheEvict(allEntries = true)
-    @Operation(summary = "Cadastra uma inscrição no sistema.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Erro de validação da inscrição"),
-            @ApiResponse(responseCode = "201", description = "inscrição efetuada com sucesso")
-    })
-    public Inscricao create(@RequestBody @Valid Inscricao inscricao) {
-        log.info("cadastrando inscricao: {}", inscricao);
-        return inscricaoRepository.save(inscricao);
-    }
+@PostMapping
+@ResponseStatus(CREATED)
+@CacheEvict(allEntries = true)
+@Operation(summary = "Cadastra uma inscrição no sistema.")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "400", description = "Erro de validação da inscrição"),
+        @ApiResponse(responseCode = "201", description = "Inscrição efetuada com sucesso")
+})
+public Inscricao create(@RequestBody @Valid Inscricao inscricao) {
+    log.info("Cadastrando inscrição: {}", inscricao);
+
+    Long userId = inscricao.getUsuario().getId();
+    Long eventId = inscricao.getEvento().getId();
+
+    // Busca o usuário e o evento pelo ID no banco de dados
+    Usuario usuario = usuarioRepository.findById(userId)
+                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+    Evento evento = eventoRepository.findById(eventId)
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado"));
+
+    // Atribui o usuário e o evento encontrados à inscrição
+    inscricao.setUsuario(usuario);
+    inscricao.setEvento(evento);
+
+    int pontosUsuario = usuario.getPontos() + evento.getPontos();
+    usuario.setPontos(pontosUsuario);
+    usuarioRepository.save(usuario);
+
+    // Salva a inscrição no banco de dados com os dados de usuário e evento corretos
+    return inscricaoRepository.save(inscricao);
+}
 
     @GetMapping("{id}")
     @Operation(summary = "Busca uma inscrição pelo id.",

@@ -1,9 +1,9 @@
 package br.com.fiap.gs.pure.demo.controller;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +25,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.fiap.gs.pure.demo.model.Evento;
+import br.com.fiap.gs.pure.demo.model.Inscricao;
+import br.com.fiap.gs.pure.demo.model.Usuario;
 import br.com.fiap.gs.pure.demo.repository.EventoRepository;
+import br.com.fiap.gs.pure.demo.repository.InscricaoRepository;
+import br.com.fiap.gs.pure.demo.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,6 +42,11 @@ public class EventoController {
 
     @Autowired
     EventoRepository repository;
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
+    @Autowired
+    InscricaoRepository inscricaoRepository;
 
     @Autowired
     PagedResourcesAssembler<Evento> pageAssembler;
@@ -112,7 +121,26 @@ public class EventoController {
     @ResponseStatus(CREATED)
     @Operation(summary = "Cadastra um evento no sistema")
     public ResponseEntity<Evento> create(@RequestBody @Valid Evento evento){
-        repository.save(evento);
+        Long userId = evento.getOrganizador().getId();
+        Usuario usuario = usuarioRepository.findById(userId)
+                                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+            evento.setOrganizador(usuario);
+            Evento eventoSalvo = repository.save(evento); 
+        
+
+            Inscricao inscricaoOrganizador = new Inscricao();
+            inscricaoOrganizador.setDataInscricao(LocalDate.now());
+            inscricaoOrganizador.setStatusInscricao("INSCRITO");
+            inscricaoOrganizador.setUsuario(usuario);
+            inscricaoOrganizador.setEvento(eventoSalvo);
+            inscricaoRepository.save(inscricaoOrganizador);
+
+
+            int pontosUsuario = usuario.getPontos();
+            pontosUsuario += eventoSalvo.getPontos();
+            usuario.setPontos(pontosUsuario);
+            usuarioRepository.save(usuario);
+
         return ResponseEntity.created(
                     evento.toEntityModel().getLink("self").get().toUri()
                 ).body(evento);

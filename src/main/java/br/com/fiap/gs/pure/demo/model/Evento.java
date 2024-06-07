@@ -46,7 +46,7 @@ public class Evento {
     private String cidade;
     @Positive(message = "{evento.pontos.positive}")
     private int pontos;
-    @OneToOne
+    @ManyToOne
     private Usuario organizador;
 
     public EntityModel<Evento> toEntityModel(){

@@ -35,12 +35,5 @@ public class Usuario {
     @PositiveOrZero(message = "{usuario.pontos.positiveorzero}")
     private int pontos;
 
-//    public EntityModel<Usuario> toEntityModel() {
-//        return EntityModel.of(
-//                this,
-//                linkTo(methodOn(UsuarioController.class).get(id)).withSelfRel(),
-//                linkTo(methodOn(UsuarioController.class).destroy(id)).withRel("delete"),
-//                linkTo(methodOn(UsuarioController.class).index()).withRel("contents")
-//        );
-//    }
+
 }
