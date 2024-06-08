@@ -3,10 +3,10 @@
 ## As requisições feitas no insomnia foram exportadas e estão disponíveis no repositório com nome requisicoes-java-gs
 
 ### A documentação pode ser acessada pelo link abaixo
-[https://gs-java-production.up.railway.app/swagger-ui/index.html] (Documentação)
+[https://gs-java-production.up.railway.app/swagger-ui/index.html]
 
 ### Link mostrando o app em funcionamento:
-[https://www.youtube.com/watch?v=zKUj6aJ0EoA] (Apresentação do app)
+[https://www.youtube.com/watch?v=zKUj6aJ0EoA]
 
 ### Link para o vídeo do pitch:
-[https://www.youtube.com/watch?v=Bk3uqj3KzZs] (Pitch)
+[https://www.youtube.com/watch?v=Bk3uqj3KzZs]
